@@ -41,32 +41,36 @@ Predicting sports outcomes in general is too vague to build a focused data pipel
 
 ### Terminology
 
-| Term | Meaning | Why It Matters |
-|------|---------|----------------|
-| Save Percentage | The proportion of shots on goal that a goaltender stops | One of the strongest individual performance indicators for predicting game outcomes |
-| Corsi For % | The percentage of total shot attempts taken by a team while on ice | A possession metric that reflects puck control and offensive pressure |
-| Power Play | A situation where one team has more skaters due to an opponent's penalty | Power play efficiency is a key predictor of scoring and game outcomes |
-| Shots on Goal | The number of shots directed at the opposing net that required a save or scored | Reflects offensive pressure and is one of the top features in the model |
-| Penalty Kill | A team's ability to defend while shorthanded due to a penalty | Strong penalty killing reduces opponent power play opportunities |
-| Home Ice Advantage | The tendency for home teams to win more often than away teams | The dataset shows ~55% home win rate, confirming this effect in the NHL |
-| Regular Season | The 82-game schedule each NHL team plays before the playoffs | The dataset covers regular season games only |
-| Goaltender Decision | Whether the goalie received a win or loss for their performance | Used as a feature to capture goaltender contribution |
+| Term | Definition |
+|------|------------|
+| Win/Loss (W/L) | The outcome of a game, used as the binary prediction target |
+| Goals For (GF) | Total goals scored by a team in a game |
+| Goals Against (GA) | Total goals scored against a team in a game |
+| Shots on Goal (SOG) | Number of shots directed on net that would have scored if not saved |
+| Save Percentage (SV%) | Proportion of shots on goal stopped by the goaltender |
+| Power Play (PP) | A situation where one team has a numerical advantage due to opponent penalties |
+| Power Play Percentage (PP%) | Rate at which a team scores during power play opportunities |
+| Penalty Kill Percentage (PK%) | Rate at which a team prevents goals when shorthanded |
+| Corsi For % (CF%) | Shot attempt differential, a measure of puck possession |
+| Expected Goals (xG) | A model-based estimate of goal probability based on shot quality |
+| Home/Away | Whether a team is playing at their home arena or on the road |
+| Overtime (OT) | Extra period played when score is tied after regulation |
 
 ### Domain Background
 
-This project exists within the domain of sports analytics, specifically NHL hockey performance analysis. Hockey is unique among major North American sports due to its low-scoring nature, fast pace, and the outsized influence of goaltender performance on game outcomes. A single outstanding goaltending performance can overcome an otherwise dominant opponent, making prediction more nuanced than in higher-scoring sports like basketball or football. The field of hockey analytics has matured significantly over the past decade, moving beyond traditional box score statistics toward advanced possession metrics like Corsi and expected goals. This project sits at the intersection of sports analytics and machine learning, using team-level per-game statistics stored in a MongoDB document database to model and predict game outcomes across multiple NHL seasons.
+The NHL is a professional ice hockey league consisting of 32 teams across the United States and Canada. Each team plays 82 regular season games, generating a rich dataset of per-game statistics. The domain sits at the intersection of sports analytics and machine learning, where team performance metrics are used to model and predict game outcomes. Hockey is unique among major sports due to its low-scoring nature, fast pace, and the outsized influence of goaltender performance, making prediction more nuanced than in higher-scoring sports like basketball or football.
 
 ### [Background Reading](background/)
 
 ### Background Summary
 
-| Title | Brief Description | Link |
-|-------|-------------------|------|
-| Predicting Sport Event Outcomes Using Deep Learning | Peer-reviewed paper presenting a hybrid CNN-Transformer model for predicting sports outcomes, outperforming traditional ML methods | [background/01_deep_learning_sports.pdf](background/01_deep_learning_sports.pdf) |
-| NHL Fantasy Picks, Props, Futures with EDGE Stats | NHL.com article covering current season player projections and advanced EDGE metrics | [background/02_nhl_edge_stats.pdf](background/02_nhl_edge_stats.pdf) |
-| Ice Hockey - NHL, Teams, Rules (Britannica) | Comprehensive overview of ice hockey history, NHL structure, rules of play, and key statistics | [background/03_britannica_hockey.pdf](background/03_britannica_hockey.pdf) |
-| Historical Perspectives and Current Directions in Hockey Analytics | Academic review of hockey analytics research covering metrics like Corsi, expected goals, and player valuation | [background/04_hockey_analytics_review.pdf](background/04_hockey_analytics_review.pdf) |
-| A Brief History of Predicting Sports Outcomes | Overview of how sports prediction evolved from hunches and point spreads to Elo ratings and modern ML models | [background/05_history_sports_prediction.pdf](background/05_history_sports_prediction.pdf) |
+| Title | Description | Link |
+|-------|-------------|------|
+| Predicting Sport Event Outcomes Using Deep Learning | Peer-reviewed paper presenting a hybrid CNN-Transformer model for predicting sports outcomes, outperforming traditional ML methods with 55.5% accuracy | [Link](background/Predicting-Sport-Event-Outcomes-Using-Deep-Learning.pdf) |
+| NHL Fantasy Picks, Props, Futures with EDGE Stats | NHL.com article covering current season player projections, advanced EDGE metrics, and futures predictions for awards and Stanley Cup | [Link](background/NHL-Fantasy-EDGE-stats.pdf) |
+| Ice Hockey - NHL, Teams, Rules (Britannica) | Comprehensive overview of ice hockey history, NHL structure, rules of play, and key statistics and awards | [Link](background/Ice-hockey-NHL-Teams-Rules-Britannica.pdf) |
+| Historical Perspectives and Current Directions in Hockey Analytics | Academic review of hockey analytics research covering metrics like Corsi, expected goals, plus-minus, and player valuation | [Link](background/Historical-Perspectives.pdf) |
+| A Brief History of Predicting Sports Outcomes | Overview of how sports prediction evolved from hunches and point spreads to Elo ratings, Moneyball, and modern ML models | [Link](background/A-Brief-History-of-Predicting-Sports-Outcomes.pdf) |
 
 ---
 
@@ -74,28 +78,28 @@ This project exists within the domain of sports analytics, specifically NHL hock
 
 ### Provenance
 
-The raw data for this project was sourced from a publicly available NHL game dataset on Kaggle, accessed via the kagglehub Python library. The dataset was originally compiled from the NHL's official Stats API and contains detailed game-by-game records across multiple NHL regular seasons. Five collections were selected for loading into MongoDB Atlas: `game` (core game records including outcome, teams, score, and venue), `game_goalie_stats` (goaltender performance per game), `game_teams_stats` (team-level statistics per game including shots, power play goals, and penalties), and `team_info` (franchise and team metadata). These four collections were chosen because they contain the performance metrics most directly relevant to predicting game outcomes. Additional collections available in the dataset such as player biographical information and shift data were excluded due to storage constraints on the Atlas free tier.
+The raw data for this project was sourced from a publicly available NHL game dataset on Kaggle, accessed via the kagglehub Python library. The dataset was originally compiled from the NHL's official Stats API and contains detailed game-by-game records across multiple NHL regular seasons. Four collections were selected for loading into MongoDB Atlas: `game` (core game records including outcome, teams, score, and venue), `game_goalie_stats` (goaltender performance per game), `game_teams_stats` (team-level statistics per game including shots, power play goals, and penalties), and `team_info` (franchise and team metadata). These four collections were chosen because they contain the performance metrics most directly relevant to predicting game outcomes. Additional collections available in the dataset such as player biographical information, shift data, and penalty records were excluded due to storage constraints on the Atlas free tier.
 
 ### Code
 
 | File | Collection | Description | Link |
 |------|------------|-------------|------|
-| `pipeline.ipynb` | `game` | Core game records including outcome, teams, and season (26,305 docs) | [pipeline.ipynb](pipeline.ipynb) |
-| `pipeline.ipynb` | `game_goalie_stats` | Goaltender stats per game (56,656 docs) | [pipeline.ipynb](pipeline.ipynb) |
-| `pipeline.ipynb` | `game_teams_stats` | Team stats per game (52,610 docs) | [pipeline.ipynb](pipeline.ipynb) |
-| `pipeline.ipynb` | `team_info` | Team and franchise metadata (33 docs) | [pipeline.ipynb](pipeline.ipynb) |
+| `pipeline.ipynb` | `game` | Core game records including outcome, teams, and season (26,305 docs) | [Code](pipeline.ipynb) |
+| `pipeline.ipynb` | `game_goalie_stats` | Goaltender stats per game (56,656 docs) | [Code](pipeline.ipynb) |
+| `pipeline.ipynb` | `game_teams_stats` | Team stats per game including shots, power play goals, and penalties (52,610 docs) | [Code](pipeline.ipynb) |
+| `pipeline.ipynb` | `team_info` | Team and franchise metadata (33 docs) | [Code](pipeline.ipynb) |
 
 ### Bias Identification
 
-Several sources of bias may have been introduced during data collection. First, the dataset only covers games and events that were officially recorded in the NHL's system, meaning any data entry errors or missing records from certain seasons could skew results. Second, the dataset likely has temporal bias — older seasons may be underrepresented or recorded with less detail than more recent ones, as data collection practices have improved over time. Third, using goalie stats at the game level means that games where multiple goalies played may not fully reflect typical game conditions, since only the primary goalie's stats are retained in the final merged dataset.
+Several sources of bias may have been introduced during data collection. First, the dataset only covers games and events that were officially recorded in the NHL's system, meaning any data entry errors or missing records from certain seasons could skew results. Second, the dataset likely has recency bias — older seasons may be underrepresented or recorded with less detail than more recent ones, as data collection practices have improved over time. Third, using goalie stats at the game level means that games where multiple goalies played may not fully reflect typical game conditions, since only the primary goalie's stats are retained in the final merged dataset.
 
 ### Bias Mitigation
 
-Temporal bias can be partially mitigated by documenting which seasons are included and limiting conclusions to that range rather than generalizing across all of NHL history. Missing or incomplete records were identified and filtered out during preprocessing by checking for null values across key fields. The multi-goalie issue was handled by selecting the goalie with the most time on ice per game, which is a standard approach in hockey analytics and ensures the most representative performance is captured.
+Recency bias can be partially mitigated by documenting which seasons are included and limiting conclusions to that range rather than generalizing across all of NHL history. Missing or incomplete records were identified and filtered out during preprocessing by checking for null values across key fields. The multi-goalie issue was handled by selecting the goalie with the most time on ice per game, which is a standard approach in hockey analytics and ensures the most representative performance is captured.
 
-### Rationale for Critical Decisions
+### Rationale
 
-The most important judgment call in this project was deciding to store data across five separate collections rather than embedding everything into a single document. While the MongoDB document model supports embedding related data directly inside each record, embedding all team stats, goalie stats, and goal events into each game document would have created extremely large and unwieldy documents. Storing them as separate collections linked by `game_id` keeps individual documents manageable while preserving the ability to join at query time. A second key decision involved which collections to include — due to storage constraints on the Atlas free tier, only collections most directly relevant to predicting game outcomes were loaded. A third key decision was choosing win/loss as the prediction target rather than goal differential or exact score, which frames the problem as binary classification and simplifies modeling while still producing a practically meaningful output.
+The most important judgment call in this project was deciding to store data across four separate collections rather than embedding everything into a single document. While MongoDB's document model supports embedding, storing game records, team stats, goalie stats, and team info separately keeps individual documents manageable and avoids the creation of extremely large records. A second key decision involved which collections to include — due to storage constraints on the Atlas free tier, only the collections most directly relevant to predicting game outcomes were loaded, while collections such as penalty records, player biographical data, and shift data were excluded. A third key decision was choosing win/loss as the prediction target rather than goal differential or exact score, which frames the problem as binary classification and simplifies modeling while still producing a practically meaningful output.
 
 ---
 
@@ -130,10 +134,6 @@ Based on the documents observed across the four collections, the following schem
 | game | outcome | string | Game result and method | "home win REG" |
 | game | venue | string | Arena name | "Bridgestone Arena" |
 | game | venue_time_zone_offset | int | UTC offset of venue timezone | -5 |
-| game_goals | play_id | string | Unique play identifier (game_id + play number) | "2015020314_272" |
-| game_goals | strength | string | Strength state when goal was scored | "Even" |
-| game_goals | gameWinningGoal | boolean | Whether this goal was the game winner | False |
-| game_goals | emptyNet | boolean | Whether goal was scored on an empty net | True |
 | game_goalie_stats | player_id | int | Unique goalie player identifier | 8471734 |
 | game_goalie_stats | team_id | int | Team the goalie played for | 26 |
 | game_goalie_stats | timeOnIce | int | Seconds played in the game | 3600 |
@@ -143,6 +143,21 @@ Based on the documents observed across the four collections, the following schem
 | game_goalie_stats | savePercentage | float | Saves divided by shots faced × 100 | 96.15 |
 | game_goalie_stats | powerPlaySavePercentage | float | Save percentage on power play shots | 75.0 |
 | game_goalie_stats | evenStrengthSavePercentage | float | Save percentage on even strength shots | 100.0 |
+| game_teams_stats | game_id | int | Unique game identifier, join key | 2016020906 |
+| game_teams_stats | team_id | int | Team identifier | 18 |
+| game_teams_stats | HoA | string | Whether team is home or away | "home" |
+| game_teams_stats | won | boolean | Whether this team won the game | True |
+| game_teams_stats | goals | float | Total goals scored by the team | 5.0 |
+| game_teams_stats | shots | float | Total shots on goal by the team | 32.0 |
+| game_teams_stats | powerPlayGoals | float | Goals scored on the power play | 1.0 |
+| game_teams_stats | powerPlayOpportunities | float | Number of power play chances | 3.0 |
+| game_teams_stats | faceOffWinPercentage | float | Percentage of faceoffs won | 52.3 |
+| game_teams_stats | pim | float | Penalty minutes accumulated | 8.0 |
+| team_info | team_id | int | Unique team identifier | 18 |
+| team_info | teamName | string | Full team name | "Predators" |
+| team_info | shortName | string | City or region name | "Nashville" |
+| team_info | abbreviation | string | Three letter team abbreviation | "NSH" |
+| team_info | franchiseId | int | Unique franchise identifier | 34 |
 
 ### Uncertainty Quantification
 
@@ -155,3 +170,9 @@ Based on the documents observed across the four collections, the following schem
 | `game_goalie_stats` | `timeOnIce` | 0 | 9027 | 3369.15 | 734.19 | 0 |
 | `game_goalie_stats` | `savePercentage` | 0.00 | 100.00 | 90.11 | 7.80 | 139 |
 | `game_goalie_stats` | `powerPlaySavePercentage` | 0.00 | 100.00 | 84.26 | 22.67 | 4,743 |
+| `game_teams_stats` | `goals` | 0 | 12 | 2.76 | 1.65 | 8 |
+| `game_teams_stats` | `shots` | 0 | 88 | 29.77 | 6.88 | 8 |
+| `game_teams_stats` | `powerPlayGoals` | 0 | 7 | 0.68 | 0.82 | 8 |
+| `game_teams_stats` | `powerPlayOpportunities` | 0 | 16 | 3.77 | 1.89 | 8 |
+| `game_teams_stats` | `pim` | 0 | 213 | 12.11 | 9.21 | 8 |
+| `game_teams_stats` | `faceOffWinPercentage` | 0 | 79.20 | 49.96 | 7.34 | 22,148 |
