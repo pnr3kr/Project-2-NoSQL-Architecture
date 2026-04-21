@@ -17,18 +17,19 @@ This project implements a data pipeline to process NHL game data, clean it, and 
 
 ### General and Specific Problem
 
-- **Initial General Problem**
-Predicting sports game outcomes is a longstanding challenge in sports analytics, as the result of any given game depends on a complex combination of team performance, strategy, and variance.
-- **Specific Problem**
-Using NHL game-by-game statistics stored across five MongoDB collections, this project builds a binary classification model to predict whether the home or away team wins, using in-game performance metrics including shots on goal, power play goals, penalties, and goaltender save percentage.
+- **Initial General Problem**:
+Predicting sports game outcomes.
 
-### Rationale
-
-The general problem was refined in three specific ways. First, the sport was narrowed to the NHL because hockey is a particularly high-variance, low-scoring sport where individual goaltender performance and special teams efficiency play an outsized role in determining outcomes, making it a compelling and nuanced classification problem. Second, the prediction target was fixed to binary win/loss rather than goal differential or exact score, because win/loss is the most practically meaningful outcome for analysts, fans, and betting markets, and framing it as binary classification makes the problem tractable for standard ML models. Third, the data source was fixed to a Kaggle NHL dataset loaded into MongoDB Atlas, because it provides consistent game-level and event-level statistics across multiple seasons in a format well-suited to the document model.
+- **Specific Problem**:
+Using a machine learning model to predict the outcome (win/loss) of NHL games based on in-game team performance statistics including shots on goal, power play goals, goaltender save percentage, and penalty minutes, drawn from game records stored across four MongoDB collections.
 
 ### Motivation
 
-The NHL generates a wealth of detailed game-by-game statistics that make it a compelling domain for predictive modeling. Accurate game outcome prediction has real value for broadcasters, fantasy hockey platforms, sports analysts, and fans alike. For teams and coaching staffs, understanding which on-ice metrics most strongly predict winning can inform line combinations, power play strategy, and goaltender selection. Hockey is also a particularly interesting sport for prediction because of its relatively low-scoring nature — a single goal or goaltender performance can swing an outcome — making it a challenging and nuanced classification problem that goes beyond simple offensive statistics.
+The NHL generates a wealth of detailed game-by-game statistics that make it a compelling domain for predictive modeling. Accurate game outcome prediction has real value for broadcasters, fantasy hockey platforms, sports analysts, and fans. For teams and coaching staffs, understanding which on-ice metrics most strongly predict winning can inform line combinations, power play strategy, and goaltender selection. Hockey is also a particularly interesting sport for prediction because of its low scoring nature with a single goal or goaltender performance swinging an outcome. This makes it a challenging classification problem that goes beyond simple offensive statistics.
+
+### Rationale
+
+Predicting sports outcomes in general is too vague to build a focused data pipeline around. Narrowing to the NHL allows us to identify a specific, consistent data source with standardized statistics across seasons. Focusing on team-level metrics rather than individual player stats keeps the problem manageable while still capturing the key factors that determine game outcomes. Choosing win/loss as the prediction target rather than exact score or goal differential frames this as a binary classification problem, which is well-suited for an initial modeling pipeline using a document database to store and query game records.
 
 ### Press Release
 
