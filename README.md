@@ -89,6 +89,10 @@ The raw data for this project was sourced from a publicly available NHL game dat
 | `pipeline.ipynb` | `game_teams_stats` | Team stats per game, including shots, power play goals, and penalties (52,610 docs) | [Code](pipeline.ipynb) |
 | `pipeline.ipynb` | `team_info` | Team and franchise metadata (33 docs) | [Code](pipeline.ipynb) |
 
+### Rationale
+
+The most important judgment call in this project was deciding to store data across four separate collections rather than embedding everything into a single document. While MongoDB's document model supports embedding, time constraints during the project made constructing fully embedded documents impractical, so separate collections were used as a time-efficient alternative. A second key decision involved which collections to include; only the collections most relevant to predicting game outcomes were loaded, while collections such as penalty records, player biographical data, and shift data were excluded. A third key decision was choosing win/loss as the prediction target rather than goal differential or exact score, which frames the problem as binary classification and simplifies modeling while still producing a practically meaningful output.
+
 ### Bias Identification
 
 Several sources of bias may have been introduced during data collection. First, the dataset only covers games and events that were officially recorded in the NHL's system, meaning any data entry errors or missing records from certain seasons could skew results. Second, the dataset likely has recency bias, as older seasons may be underrepresented or recorded with less detail than more recent ones. Additionally, data collection practices have improved over time. Third, using goalie stats at the game level means that games where multiple goalies played may not fully reflect typical game conditions, since only the primary goalie's stats are retained in the final merged dataset.
@@ -96,10 +100,6 @@ Several sources of bias may have been introduced during data collection. First, 
 ### Bias Mitigation
 
 Recency bias can be partially mitigated by documenting which seasons are included and limiting conclusions to that range rather than generalizing across all of NHL history. Missing or incomplete records were identified and filtered out during preprocessing by checking for null values across key fields. The multi-goalie issue was handled by selecting the goalie with the most time on ice per game, which is a standard approach in hockey analytics and ensures the most representative performance is captured.
-
-### Rationale
-
-The most important judgment call in this project was deciding to store data across four separate collections rather than embedding everything into a single document. While MongoDB's document model supports embedding, time constraints during the project made constructing fully embedded documents impractical, so separate collections were used as a time-efficient alternative. A second key decision involved which collections to include; only the collections most relevant to predicting game outcomes were loaded, while collections such as penalty records, player biographical data, and shift data were excluded. A third key decision was choosing win/loss as the prediction target rather than goal differential or exact score, which frames the problem as binary classification and simplifies modeling while still producing a practically meaningful output.
 
 ---
 
