@@ -6,7 +6,7 @@ This repository contains a fully constructed secondary dataset built using the d
 |------|-------|
 | Name | Tristen Davin |
 | NetID | pnr3kr |
-| DOI | [Link](YOUR_ZENODO_DOI) |
+| DOI | [Link](https://doi.org/10.5281/zenodo.19865471)|
 | Press Release | [New Data Analysis Reveals How NHL In-Game Statistics Can Predict Game Outcomes](press_release.md) |
 | Pipeline | [pipeline.ipynb](pipeline.ipynb) |
 | License | [MIT](LICENSE) |
