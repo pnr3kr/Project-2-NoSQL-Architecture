@@ -21,11 +21,11 @@ This project implements a data pipeline to process NHL game data, clean it, and 
 Predicting sports game outcomes.
 
 - **Specific Problem**:
-Using a machine learning model to predict the outcome (win/loss) of NHL games based on in-game team performance statistics including shots on goal, power play goals, goaltender save percentage, and penalty minutes, drawn from game records stored across four MongoDB collections.
+Predicting the outcome (win/loss) of NHL games using a machine learning model based on in-game team performance statistics, including shots on goal, power play goals, goaltender save percentage, and penalty minutes, drawn from game records stored across four MongoDB collections.
 
 ### Motivation
 
-The NHL generates a wealth of detailed game-by-game statistics that make it a compelling domain for predictive modeling. Accurate game outcome prediction has real value for broadcasters, fantasy hockey platforms, sports analysts, and fans. For teams and coaching staffs, understanding which on-ice metrics most strongly predict winning can inform line combinations, power play strategy, and goaltender selection. Hockey is also a particularly interesting sport for prediction because of its low scoring nature with a single goal or goaltender performance swinging an outcome. This makes it a challenging classification problem that goes beyond simple offensive statistics.
+The NHL generates a massive amount of detailed game-by-game statistics, making it a compelling domain for predictive modeling. Accurate game outcome prediction has real value for broadcasters, fantasy hockey platforms, sports analysts, and fans. For teams and coaching staffs, understanding which on-ice metrics most strongly predict winning can inform line combinations, power play strategy, and goaltender selection. Hockey is also a particularly interesting sport for prediction because of its low-scoring nature, with a single goal or goaltender performance swinging an outcome. This makes it a challenging classification problem that goes beyond simple offensive statistics.
 
 ### Rationale
 
@@ -58,7 +58,7 @@ Predicting sports outcomes in general is too vague to build a focused data pipel
 
 ### Domain Background
 
-The NHL is a professional ice hockey league consisting of 32 teams across the United States and Canada. Each team plays 82 regular season games, generating a rich dataset of per-game statistics. The domain sits at the intersection of sports analytics and machine learning, where team performance metrics are used to model and predict game outcomes. Hockey is unique among major sports due to its low-scoring nature, fast pace, and the outsized influence of goaltender performance, making prediction more nuanced than in higher-scoring sports like basketball or football.
+The NHL is a professional ice hockey league consisting of 32 teams across the United States and Canada. Each team plays 82 regular-season games, generating an extensive dataset of per-game statistics. Hockey is unique among major sports due to its low-scoring nature, fast pace, and the outsized influence of goaltender performance, making prediction more complex than in higher-scoring sports like basketball or football.
 
 ### [Background Reading](background/)
 
@@ -78,7 +78,7 @@ The NHL is a professional ice hockey league consisting of 32 teams across the Un
 
 ### Provenance
 
-The raw data for this project was sourced from a publicly available NHL game dataset on Kaggle, accessed via the kagglehub Python library. The dataset was originally compiled from the NHL's official Stats API and contains detailed game-by-game records across multiple NHL regular seasons. Four collections were selected for loading into MongoDB Atlas: `game` (core game records including outcome, teams, score, and venue), `game_goalie_stats` (goaltender performance per game), `game_teams_stats` (team-level statistics per game including shots, power play goals, and penalties), and `team_info` (franchise and team metadata). These four collections were chosen because they contain the performance metrics most directly relevant to predicting game outcomes. Additional collections available in the dataset such as player biographical information, shift data, and penalty records were excluded due to storage constraints on the Atlas free tier.
+The raw data for this project was sourced from a publicly available NHL game dataset on Kaggle, accessed via the kagglehub Python library. The dataset was originally compiled from the NHL's official Stats API and contains detailed game-by-game records across multiple NHL regular seasons. Four collections were selected for loading into MongoDB Atlas: `game` (core game records including outcome, teams, score, and venue), `game_goalie_stats` (goaltender performance per game), `game_teams_stats` (team-level statistics per game including shots, power play goals, and penalties), and `team_info` (franchise and team metadata). These four collections were chosen because they contain the performance metrics most directly relevant to predicting game outcomes. Additional collections available in the dataset, such as player biographical information, shift data, and penalty records, were excluded due to storage constraints on the Atlas free tier.
 
 ### Code
 
@@ -86,12 +86,12 @@ The raw data for this project was sourced from a publicly available NHL game dat
 |------|------------|-------------|------|
 | `pipeline.ipynb` | `game` | Core game records including outcome, teams, and season (26,305 docs) | [Code](pipeline.ipynb) |
 | `pipeline.ipynb` | `game_goalie_stats` | Goaltender stats per game (56,656 docs) | [Code](pipeline.ipynb) |
-| `pipeline.ipynb` | `game_teams_stats` | Team stats per game including shots, power play goals, and penalties (52,610 docs) | [Code](pipeline.ipynb) |
+| `pipeline.ipynb` | `game_teams_stats` | Team stats per game, including shots, power play goals, and penalties (52,610 docs) | [Code](pipeline.ipynb) |
 | `pipeline.ipynb` | `team_info` | Team and franchise metadata (33 docs) | [Code](pipeline.ipynb) |
 
 ### Bias Identification
 
-Several sources of bias may have been introduced during data collection. First, the dataset only covers games and events that were officially recorded in the NHL's system, meaning any data entry errors or missing records from certain seasons could skew results. Second, the dataset likely has recency bias — older seasons may be underrepresented or recorded with less detail than more recent ones, as data collection practices have improved over time. Third, using goalie stats at the game level means that games where multiple goalies played may not fully reflect typical game conditions, since only the primary goalie's stats are retained in the final merged dataset.
+Several sources of bias may have been introduced during data collection. First, the dataset only covers games and events that were officially recorded in the NHL's system, meaning any data entry errors or missing records from certain seasons could skew results. Second, the dataset likely has recency bias, as older seasons may be underrepresented or recorded with less detail than more recent ones. Additionally, data collection practices have improved over time. Third, using goalie stats at the game level means that games where multiple goalies played may not fully reflect typical game conditions, since only the primary goalie's stats are retained in the final merged dataset.
 
 ### Bias Mitigation
 
@@ -99,7 +99,7 @@ Recency bias can be partially mitigated by documenting which seasons are include
 
 ### Rationale
 
-The most important judgment call in this project was deciding to store data across four separate collections rather than embedding everything into a single document. While MongoDB's document model supports embedding, storing game records, team stats, goalie stats, and team info separately keeps individual documents manageable and avoids the creation of extremely large records. A second key decision involved which collections to include — due to storage constraints on the Atlas free tier, only the collections most directly relevant to predicting game outcomes were loaded, while collections such as penalty records, player biographical data, and shift data were excluded. A third key decision was choosing win/loss as the prediction target rather than goal differential or exact score, which frames the problem as binary classification and simplifies modeling while still producing a practically meaningful output.
+The most important judgment call in this project was deciding to store data across four separate collections rather than embedding everything into a single document. While MongoDB's document model supports embedding, time constraints during the project made constructing fully embedded documents impractical, so separate collections were used as a time-efficient alternative. A second key decision involved which collections to include; only the collections most relevant to predicting game outcomes were loaded, while collections such as penalty records, player biographical data, and shift data were excluded. A third key decision was choosing win/loss as the prediction target rather than goal differential or exact score, which frames the problem as binary classification and simplifies modeling while still producing a practically meaningful output.
 
 ---
 
