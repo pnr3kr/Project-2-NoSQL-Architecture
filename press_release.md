@@ -1,6 +1,4 @@
-# Press Release
-
-## New Data Analysis Reveals How NHL In-Game Statistics Can Predict Game Outcomes
+# New Data Analysis Reveals How NHL In-Game Statistics Can Predict Game Outcomes
 
 ### Hook
 
