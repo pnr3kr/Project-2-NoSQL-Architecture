@@ -1,6 +1,6 @@
 # DS 4320 Project 2: Predicting NHL Game Outcomes with NoSQL Data Architecture
 
-This project implements a data pipeline to process NHL game data, clean it, and train a machine learning model to predict game outcomes. The pipeline is designed to handle the complexities of real-world data, including duplicates, null values, and irrelevant features. The final model's performance is evaluated against a baseline to demonstrate the value of the data processing steps.
+This repository contains a fully constructed secondary dataset built using the document model in MongoDB Atlas, combining NHL game records, team statistics, goaltender performance, and team information data across four collections. The dataset is used to train and evaluate classification models that predict whether the home or away team wins an NHL game based on in-game performance metrics, including shots on goal, power play goals, and goaltender save percentage. A Random Forest classifier achieved 84% cross-validated accuracy after removing data leakage. The pipeline includes data collection, MongoDB-based document storage, feature engineering, cross-validated model comparison, and publication-quality visualizations of results.
 
 | Spec | Value |
 |------|-------|
