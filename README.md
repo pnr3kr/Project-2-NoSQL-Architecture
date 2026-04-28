@@ -60,17 +60,17 @@ Predicting sports outcomes in general is too vague to build a focused data pipel
 
 The NHL is a professional ice hockey league consisting of 32 teams across the United States and Canada. Each team plays 82 regular-season games, generating an extensive dataset of per-game statistics. Hockey is unique among major sports due to its low-scoring nature, fast pace, and the outsized influence of goaltender performance, making prediction more complex than in higher-scoring sports like basketball or football.
 
-### [Background Reading](background/)
+### [Background Reading](https://myuva-my.sharepoint.com/:f:/g/personal/pnr3kr_virginia_edu/IgBQN6j6hN_3QqN3vuppqCptARAztXwGbxyYGeKlOzv76j8?e=v9evWx)
 
 ### Background Summary
 
 | Title | Description | Link |
 |-------|-------------|------|
-| Predicting Sport Event Outcomes Using Deep Learning | Peer-reviewed paper presenting a hybrid CNN-Transformer model for predicting sports outcomes, outperforming traditional ML methods with 55.5% accuracy | [Link](background/Predicting-Sport-Event-Outcomes-Using-Deep-Learning.pdf) |
-| NHL Fantasy Picks, Props, Futures with EDGE Stats | NHL.com article covering current season player projections, advanced EDGE metrics, and futures predictions for awards and Stanley Cup | [Link](background/NHL-Fantasy-EDGE-stats.pdf) |
-| Ice Hockey - NHL, Teams, Rules (Britannica) | Comprehensive overview of ice hockey history, NHL structure, rules of play, and key statistics and awards | [Link](background/Ice-hockey-NHL-Teams-Rules-Britannica.pdf) |
-| Historical Perspectives and Current Directions in Hockey Analytics | Academic review of hockey analytics research covering metrics like Corsi, expected goals, plus-minus, and player valuation | [Link](background/Historical-Perspectives.pdf) |
-| A Brief History of Predicting Sports Outcomes | Overview of how sports prediction evolved from hunches and point spreads to Elo ratings, Moneyball, and modern ML models | [Link](background/A-Brief-History-of-Predicting-Sports-Outcomes.pdf) |
+| Predicting Sport Event Outcomes Using Deep Learning | Peer-reviewed paper presenting a hybrid CNN-Transformer model for predicting sports outcomes, outperforming traditional ML methods with 55.5% accuracy | [Link](https://myuva-my.sharepoint.com/:b:/g/personal/pnr3kr_virginia_edu/IQClg0IVXCmBRLUynQQ_xonaATKUnxeLOciIal3AYMCjBrY?e=ULRzb1) |
+| NHL Fantasy Picks, Props, Futures with EDGE Stats | NHL.com article covering current season player projections, advanced EDGE metrics, and futures predictions for awards and Stanley Cup | [Link](https://myuva-my.sharepoint.com/:b:/g/personal/pnr3kr_virginia_edu/IQCeiyOvV8zDRKQPsVE3e_9SAdZb61IzMnLit33ZUDH-IQw?e=HbogFj) |
+| Ice Hockey - NHL, Teams, Rules (Britannica) | Comprehensive overview of ice hockey history, NHL structure, rules of play, and key statistics and awards | [Link](https://myuva-my.sharepoint.com/:b:/g/personal/pnr3kr_virginia_edu/IQDwX8rexeTZTZt57MuGJqKpARLO-XWZHjbCLUJOjiDTRmM?e=rdY0jT) |
+| Historical Perspectives and Current Directions in Hockey Analytics | Academic review of hockey analytics research covering metrics like Corsi, expected goals, plus-minus, and player valuation | [Link](https://myuva-my.sharepoint.com/:b:/g/personal/pnr3kr_virginia_edu/IQA7-larw12tR7AOUZkmNguvAWjTnuqcYyh7X_1TEOicnis?e=qCACM1) |
+| A Brief History of Predicting Sports Outcomes | Overview of how sports prediction evolved from hunches and point spreads to Elo ratings, Moneyball, and modern ML models | [Link](https://myuva-my.sharepoint.com/:b:/g/personal/pnr3kr_virginia_edu/IQCiX1sc1x00R61ey4oJ_vTRAcNLENy4WoxLJBm2G8uQjSA?e=aDEnII) |
 
 ---
 
