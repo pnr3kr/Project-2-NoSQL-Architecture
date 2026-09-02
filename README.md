@@ -1,6 +1,6 @@
 # Predicting NHL Game Outcomes with NoSQL Data Architecture
 
-This repository contains a fully constructed secondary dataset built using the document model in MongoDB Atlas, combining NHL game records, team statistics, goaltender performance, and team information data across four collections. The dataset is used to train and evaluate classification models that predict whether the home or away team wins an NHL game based on in-game performance metrics, including shots on goal, power play goals, and goaltender save percentage. A Random Forest classifier achieved 84% cross-validated accuracy after removing data leakage. The pipeline includes data collection, MongoDB-based document storage, feature engineering, cross-validated model comparison, and publication-quality visualizations of results.
+This repository contains a fully constructed secondary dataset built using the document model in MongoDB Atlas, combining NHL game records, team statistics, goaltender performance, and team information data across four collections. The dataset is used to train and evaluate classification models that predict whether the home or away team wins an NHL game based on in-game performance metrics, including shots on goal, power play goals, and goaltender save percentage. A Random Forest classifier reached 84% cross-validated accuracy, but a feature audit showed that every model input is an in-game statistic unavailable before puck drop, making that figure outcome reconstruction rather than prediction. The pipeline includes data collection, MongoDB-based document storage, feature engineering, cross-validated model comparison, and publication-quality visualizations of results.
 
 | Spec | Value |
 |------|-------|
@@ -10,6 +10,101 @@ This repository contains a fully constructed secondary dataset built using the d
 | Press Release | [New Data Analysis Reveals How NHL In-Game Statistics Can Predict Game Outcomes](press_release.md) |
 | Pipeline | [pipeline.ipynb](pipeline.ipynb) |
 | License | [MIT](LICENSE) |
+
+---
+
+## Headline
+
+**135,604 documents** across 4 collections → **26,305 games** → **23 features** → Random Forest at **84.1%** cross-validated accuracy.
+
+**That 84.1% is not a prediction result, and finding out why is the most useful thing in this project.** All 23 model inputs are *in-game* box-score statistics — shots, penalty minutes, power play goals, goaltender save percentage. None are knowable before puck drop, so the model is reconstructing an outcome it can already see. Published work on sports outcome prediction sits around [55.5%](https://myuva-my.sharepoint.com/:b:/g/personal/pnr3kr_virginia_edu/IQClg0IVXCmBRLUynQQ_xonaATKUnxeLOciIal3AYMCjBrY?e=ULRzb1); a genuine 84% would be a major result, and that gap is what prompted the audit below.
+
+---
+
+## Pipeline
+
+```
+Kaggle NHL dataset (originally NHL Stats API)
+        │  kagglehub
+        ▼
+   MongoDB Atlas ──── 4 collections, 135,604 documents
+        │  merge on game_id
+        ▼
+   df_raw ──────────── 26,305 games joined to team, goalie, and franchise records
+        │  drop score columns, IDs, high-null columns
+        ▼
+   df_clean ────────── 23 numeric features, target = home_win
+        │  80/20 split, 5-fold cross-validation
+        ▼
+   4 models compared ─ Random Forest best at 84.1%
+        │  feature audit
+        ▼
+   Finding ─────────── all 23 features are post-game; result is leakage, not prediction
+```
+
+| Stage | What it does |
+|-------|--------------|
+| Load | Pulls the Kaggle NHL dataset via `kagglehub` and loads four collections into MongoDB Atlas |
+| Join | Merges `game`, `game_teams_stats`, `game_goalie_stats`, and `team_info` on `game_id`; selects the highest-time-on-ice goalie per game |
+| Clean | Drops high-null columns, removes score and identifier fields, checks for duplicates |
+| Model | Trains and cross-validates Logistic Regression, Random Forest, Gradient Boosting, and SVM |
+| Audit | Reviews every surviving feature for availability at prediction time |
+
+**Stack:** Python · MongoDB Atlas · pandas · scikit-learn · matplotlib/seaborn
+
+---
+
+## Results
+
+| Model | CV accuracy | Std dev |
+|-------|-------------|---------|
+| Random Forest | **0.8412** | 0.0030 |
+| Gradient Boosting | 0.8001 | 0.0119 |
+| SVM | 0.7989 | 0.0058 |
+| Logistic Regression | 0.6641 | 0.0079 |
+
+Held-out test set: 84% accuracy, 0.85 precision / 0.86 recall on home wins across 4,596 games.
+
+### Why these numbers overstate the result
+
+Two rounds of feature review happened, and only the second was sufficient.
+
+**Round one** removed the obvious leaks — `home_goals`, `away_goals`, and identifier columns. Accuracy fell from ~96% to 84%, which looked like the problem was solved.
+
+**Round two** examined what remained:
+
+```
+home_shots, home_pim, home_powerPlayOpportunities, home_powerPlayGoals,
+away_shots, away_pim, away_powerPlayOpportunities, away_powerPlayGoals,
+goalie_timeOnIce, goalie_assists, goalie_goals, goalie_pim, goalie_shots,
+goalie_saves, goalie_powerPlaySaves, goalie_shortHandedSaves, goalie_evenSaves,
+goalie_shortHandedShotsAgainst, goalie_evenShotsAgainst,
+goalie_powerPlayShotsAgainst, goalie_savePercentage,
+goalie_powerPlaySavePercentage, goalie_evenStrengthSavePercentage
+```
+
+Every one is measured *during* the game being predicted. Two are decisive on their own:
+
+- `home_powerPlayGoals` and `away_powerPlayGoals` are goals. The score columns were dropped, but a component of the score was not.
+- `goalie_savePercentage` with `goalie_shots` recovers goals allowed exactly, since `goals = shots × (1 − save%)`.
+
+The score is therefore fully reconstructable from the surviving features.
+
+A train/test split does not catch this. A held-out set detects **overfitting** — memorizing training rows — but leakage is a property of the features themselves and is present identically in train and test. Every metric looks healthy while the model stays impossible to run in advance: at 6pm you don't know how many shots a team will take at 7.
+
+The joins confirm it structurally. All three merges are `on="game_id"`, and the notebook contains no `rolling()`, `shift()`, `expanding()`, or `cumsum` — the operations needed to build features from *prior* games.
+
+### What a valid version requires
+
+Every feature must be knowable at puck drop, which means computing team and goaltender form as of the morning of the game:
+
+- Rolling team averages over the previous N games (shots, goals for/against, power play conversion)
+- Season-to-date goaltender save percentage for the expected starter
+- Rest days and back-to-back flags
+- Home/away and travel distance
+- Head-to-head history
+
+Mechanically that is `sort_values('date_time_GMT')` → `groupby('team_id')` → `rolling(N)` → `shift(1)`, so no row can see its own game. Realistic accuracy for that design is roughly 60% against a home-ice baseline near 55% — modest, but real.
 
 ---
 
