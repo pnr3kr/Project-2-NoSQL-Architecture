@@ -19,6 +19,8 @@ This repository contains a fully constructed secondary dataset built using the d
 
 **That 84.1% is not a prediction result, and finding out why is the most useful thing in this project.** All 23 model inputs are *in-game* box-score statistics — shots, penalty minutes, power play goals, goaltender save percentage. None are knowable before puck drop, so the model is reconstructing an outcome it can already see. Published work on sports outcome prediction sits around [55.5%](https://myuva-my.sharepoint.com/:b:/g/personal/pnr3kr_virginia_edu/IQClg0IVXCmBRLUynQQ_xonaATKUnxeLOciIal3AYMCjBrY?e=ULRzb1); a genuine 84% would be a major result, and that gap is what prompted the audit below.
 
+![Cross-validation accuracy by model and top feature importances](results/model_results.png)
+
 ---
 
 ## Pipeline
@@ -82,6 +84,10 @@ goalie_shortHandedShotsAgainst, goalie_evenShotsAgainst,
 goalie_powerPlayShotsAgainst, goalie_savePercentage,
 goalie_powerPlaySavePercentage, goalie_evenStrengthSavePercentage
 ```
+
+![Correlation matrix of game, team, and goaltender statistics against home_win](pipeline_files/pipeline_9_1.png)
+
+Correlating each surviving column against `home_win` puts numbers on it: `home_powerPlayGoals` sits at r = 0.25 and `away_powerPlayGoals` at r = −0.24, both because power-play goals are a literal subset of the score. Every goaltender column, by contrast, correlates with `home_win` at under 0.08 on its own — including `goalie_savePercentage` at −0.03 — so that leak isn't visible as a strong correlation in the matrix at all. It only shows up once `goalie_savePercentage` and `goalie_shots` are combined algebraically, which is what the formula below does.
 
 Every one is measured *during* the game being predicted. Two are decisive on their own:
 
